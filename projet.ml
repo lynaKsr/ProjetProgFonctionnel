@@ -1,3 +1,4 @@
+
 type op = Plus|Moins| Multiple | Divise ;;
 
 type uni =  Arite1;;
@@ -16,8 +17,8 @@ let  is_cst(s : string) : bool=
   for i = 0 to String.length(s)-1  do
 
     if s.[i] >= '0' && s.[i] <='9' then
-      result := true 
-    else result := false 
+      result := !result 
+    else  result := false
   done;
   !result
   
@@ -64,9 +65,9 @@ let rec parse_aux (l : string list) (s :string list )(suiv : bool) : tree list  
                                       else Op(Plus, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
                                 |"-" -> if suiv = false then  Op(Moins, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) reste true
                                       else Op(Moins, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
-                                |"/" ->if suiv = false then  Op(Moins, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) reste true
+                                |"/" ->if suiv = false then  Op(Divise, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) reste true
                                       else Op(Divise, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
-                                |"*" -> if suiv = false then  Op(Moins, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) reste true
+                                |"*" -> if suiv = false then  Op(Multiple, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) reste true
                                       else Op(Multiple, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
                                 |x -> parse_aux (tail)( hd::s) false
                                )
@@ -107,4 +108,10 @@ parse ["7";"x";"4";"2";"3";"+";"-";"*";"+"] ;;
 
 
 parse(["13" ;"2"; "5";"*";"1";"0";"/";"-";"+"]) ;;
+
+
+is_cst("6");;
+
+
+
 
