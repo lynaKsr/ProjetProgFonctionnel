@@ -5,7 +5,6 @@ type uni =  Arite1;;
 
 type tree = Cst of int
              |Var of string
-             |Exp of string
              |Uni of uni * tree
              |Op of op * tree * tree
              |EMPTY   
