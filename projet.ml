@@ -3,8 +3,9 @@ type op = Plus|Moins| Multiple | Divise ;;
 type uni =  Arite1;;
 
 
-type tree = Cst of int
+type tree = Cst of string
              |Var of string
+             |Exp of string
              |Uni of uni * tree
              |Op of op * tree * tree
              |EMPTY   
@@ -22,26 +23,21 @@ let  is_cst(s : string) : bool=
   
 ;;
 
-is_cst("");;
+let convert_to_tree(s :string) : tree =
 
-let string_to_int(s : string) : int =
-  
-  for i = 0 to String.length(s)-1  do
+  if is_cst(s) then Cst(s)
+  else Var(s) ;;
 
-    
-
-
-;;
                     
 let rec parse_aux (l : string list) (s :string list )(suiv : bool) : tree list  =
 
   match l, s with
   |[] , _ -> []
   |hd::[] , v::[] ->(match hd with
-                       |"+" -> [Op(Plus, Exp(v) , EMPTY)]
-                       |"-" -> [Op(Moins, Exp(v) , EMPTY)]
-                       |"/" -> [Op(Divise, Exp(v) , EMPTY)]
-                       |"*" -> [Op(Multiple,Exp(v) , EMPTY)]
+                       |"+" -> [Op(Plus, convert_to_tree(v) , EMPTY)]
+                       |"-" -> [Op(Moins, convert_to_tree(v) , EMPTY)]
+                       |"/" -> [Op(Divise, convert_to_tree(v) , EMPTY)]
+                       |"*" -> [Op(Multiple,convert_to_tree(v) , EMPTY)]
                        |x -> failwith ""
                       )
   |hd::tail, v::[] -> (match hd with
@@ -53,25 +49,25 @@ let rec parse_aux (l : string list) (s :string list )(suiv : bool) : tree list  
                       )
   |hd::tail, v1::v2::[] -> (
                               match hd with
-                              |"+" -> if suiv = false then  Op(Plus, Exp(v1) ,Exp(v2))::parse_aux (tail) [] true
-                                      else Op(Plus, Exp(v1) ,EMPTY)::parse_aux (tail) (v2::[]) true
-                              |"-" -> if suiv = false then  Op(Moins, Exp(v1) ,Exp(v2))::parse_aux (tail) [] true
-                                      else Op(Moins, Exp(v1) ,EMPTY)::parse_aux (tail) (v2::[]) true
-                              |"/" -> if suiv = false then  Op(Divise, Exp(v1) ,Exp(v2))::parse_aux (tail) [] true
-                                      else Op(Divise, Exp(v1) ,EMPTY)::parse_aux (tail) (v2::[]) true
-                              |"*" ->if suiv = false then  Op(Multiple, Exp(v1) ,Exp(v2))::parse_aux (tail) [] true
-                                      else Op(Multiple, Exp(v1) ,EMPTY)::parse_aux (tail)(v2::[]) true
+                              |"+" -> if suiv = false then  Op(Plus, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) [] true
+                                      else Op(Plus, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::[]) true
+                              |"-" -> if suiv = false then  Op(Moins, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) [] true
+                                      else Op(Moins, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::[]) true
+                              |"/" -> if suiv = false then  Op(Divise, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) [] true
+                                      else Op(Divise, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::[]) true
+                              |"*" ->if suiv = false then  Op(Multiple, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) [] true
+                                      else Op(Multiple, convert_to_tree(v1) ,EMPTY)::parse_aux (tail)(v2::[]) true
                               |x -> parse_aux (tail)( hd::s) false
   )
   |hd::tail , v1::v2::reste -> (match hd with
-                                |"+" -> if suiv = false then  Op(Plus, Exp(v1) ,Exp(v2))::parse_aux (tail) reste true
-                                      else Op(Plus, Exp(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
-                                |"-" -> if suiv = false then  Op(Moins, Exp(v1) ,Exp(v2))::parse_aux (tail) reste true
-                                      else Op(Moins, Exp(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
-                                |"/" ->if suiv = false then  Op(Moins, Exp(v1) ,Exp(v2))::parse_aux (tail) reste true
-                                      else Op(Divise, Exp(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
-                                |"*" -> if suiv = false then  Op(Moins, Exp(v1) ,Exp(v2))::parse_aux (tail) reste true
-                                      else Op(Multiple, Exp(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
+                                |"+" -> if suiv = false then  Op(Plus, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) reste true
+                                      else Op(Plus, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
+                                |"-" -> if suiv = false then  Op(Moins, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) reste true
+                                      else Op(Moins, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
+                                |"/" ->if suiv = false then  Op(Moins, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) reste true
+                                      else Op(Divise, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
+                                |"*" -> if suiv = false then  Op(Moins, convert_to_tree(v1) ,convert_to_tree(v2))::parse_aux (tail) reste true
+                                      else Op(Multiple, convert_to_tree(v1) ,EMPTY)::parse_aux (tail) (v2::reste) true
                                 |x -> parse_aux (tail)( hd::s) false
                                )
                                          
@@ -107,14 +103,8 @@ let parse(list : string list) : tree =
 
 
   
-parse ["7";"14";"4";"2";"3";"+";"-";"*";"+"] ;;
+parse ["7";"x";"4";"2";"3";"+";"-";"*";"+"] ;;
 
 
 parse(["13" ;"2"; "5";"*";"1";"0";"/";"-";"+"]) ;;
-
-
-
-
-
-
 
